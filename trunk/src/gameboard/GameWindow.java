@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -23,7 +24,7 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 
 public class GameWindow extends JFrame {
-
+	public static final double VERSION = 1.0;
 	/**
 	 * 
 	 */
@@ -40,16 +41,16 @@ public class GameWindow extends JFrame {
 	 * 
 	 */
 	private JTextArea log;
-	
 	private JLabel status;
-	
 	private JScrollPane scrollable;
+	private GameBoard board;
+	private boolean gameOver = false;
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -7339354437547422011L;
-	
-	public GameWindow(){
+
+	public GameWindow(GameBoard board){
 		//Sets the window properties
 		super("GATTA TIPNE KHEL (Pebble Game)");
 		setSize(WIDTH, HEIGHT);
@@ -58,22 +59,25 @@ public class GameWindow extends JFrame {
 		addWindowListener(new WinowEventListener());
 		//Sets the layout to be null
 		setLayout(null);
-		
+
 		//Adds elements
 		addMenuBar();
 		addLogWindow();
 		addButtons();
 		addStatusBar();
 		addStatus();
-		
+
 		//Sets visible
 		setVisible(true);
+
+		this.board = board;
+		setProgress(this.board.getPebblesLeft());
 	}
-	
+
 	private void addMenuBar(){
 		JMenuBar menu = new JMenuBar();
 		JMenuItem item; //Storage item
-	
+
 		//File menu
 		JMenu file = new JMenu("File");
 		//New
@@ -90,7 +94,7 @@ public class GameWindow extends JFrame {
 		file.add(item);
 		//Add the file menu to the menu bar
 		menu.add(file);
-		
+
 		//Help menu
 		JMenu help = new JMenu("Help");
 		//Rules
@@ -103,7 +107,7 @@ public class GameWindow extends JFrame {
 		help.add(item);
 		//Add the help menu to the menu bar
 		menu.add(help);
-		
+
 		this.setJMenuBar(menu);
 	}
 
@@ -121,7 +125,7 @@ public class GameWindow extends JFrame {
 		log.setForeground(Color.black);
 		log.setEditable(false);
 		log.addKeyListener(new KeyboardListener());
-		
+
 		//Sets up the scroll pane
 		scrollable = new JScrollPane(log);
 		scrollable.setAutoscrolls(true);
@@ -131,26 +135,26 @@ public class GameWindow extends JFrame {
 		scrollable.setLocation(25, 15);
 		//HEIGHT = 390-25-10 = 355
 		scrollable.setSize(WIDTH-50, 355);
-		
+
 		//Adds to the Frame
 		this.add(scrollable);
 	}
-	
+
 	private void addButtons(){
 		JPanel buttonPanel = new JPanel(new GridLayout(1, 3));
 		buttonPanel.setSize(WIDTH-50, 100);
 		//StatusBarLocation-ButtonHeight-Buffer = 500-200-10 = 290
 		buttonPanel.setLocation(25, 380);
-		
+
 		//Generate Buttons
 		buttonPanel.add(createButtons(1));
 		buttonPanel.add(createButtons(2));
 		buttonPanel.add(createButtons(3));
-		
+
 		//Add the panel
 		this.add(buttonPanel);
 	}
-	
+
 	private JButton createButtons(int number){
 		JButton button = new JButton();
 		button.setText(""+number);
@@ -163,7 +167,7 @@ public class GameWindow extends JFrame {
 		button.addKeyListener(new KeyboardListener());
 		return button;
 	}
-	
+
 	private void addStatusBar(){
 		progress = new JProgressBar(JProgressBar.HORIZONTAL, 0, 100);
 		progress.setSize(WIDTH-50, 25);
@@ -174,7 +178,7 @@ public class GameWindow extends JFrame {
 		//Add to the JFrame
 		this.add(progress);
 	}
-	
+
 	private void addStatus() {
 		status = new JLabel();
 		status.setText(0+"");
@@ -191,44 +195,82 @@ public class GameWindow extends JFrame {
 		progress.setToolTipText("There are "+value+" pebles left");
 		status.setText(value+"");
 	}
-	
+
 	private void addToLog(String msg){
 		scrollable.setFocusable(true);
 		log.append(msg+'\n');
 	}
 
+	private void gameOver() {
+		log.setForeground(Color.red);
+		log.append("GAME OVER");
+		gameOver = true;
+	}
+
+	private void takeAway(int remove){
+		if(gameOver) return;
+		try {
+			addToLog("Removing :" + remove);
+			board.takeAway(remove);
+			setProgress(board.getPebblesLeft());
+		} catch (GameOver e) {
+			gameOver();
+		}
+	}
+
+
 	private class ButtonListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			addToLog(e.getActionCommand());
+			if(e.getActionCommand().equals("1")){
+				takeAway(1);
+			} else if(e.getActionCommand().equals("2")) {
+				takeAway(2);
+			} else if(e.getActionCommand().equals("3")) {
+				takeAway(3);
+
+			} else if(e.getActionCommand().equals("New")){
+				log.setText("Starting new game");
+				log.setForeground(Color.black);
+				board.newGame(); 
+			} else if(e.getActionCommand().equals("Close")){	
+				System.exit(NORMAL);
+			} else if(e.getActionCommand().equals("Rules")){
+				JOptionPane.showMessageDialog(null, "Goal:\nForce the other player to pick up the last pebble.\n"
+						+ "\nHow to Play:\nChoose one, two or three tiles to pick up. "
+						+ "\nThe player that is forced to pick up the last pebble loses.\n");
+			} else if(e.getActionCommand().equals("About")){
+				JOptionPane.showMessageDialog(null, "Created by:\nKarl Schmidbauer and Ben Ebert\n\nVersion:\n"+VERSION);
+			} else if(e.getActionCommand().equals("Options")){
+				//TODO Options Window 1 or 2 players, heuristic
+			} else{
+				addToLog(e.getActionCommand());
+			}
 		}
 	}
-	
+
 	private class KeyboardListener implements KeyListener{
 		@Override
-		public void keyPressed(KeyEvent e) {
-			
-		}
+		public void keyPressed(KeyEvent e) { }
 		@Override
-		public void keyReleased(KeyEvent e) {
-		}
+		public void keyReleased(KeyEvent e) { }
 		@Override
 		public void keyTyped(KeyEvent e) {
 			switch(e.getKeyChar()){
 			case '1':
-				addToLog(e.getKeyChar()+"");
+				takeAway(1);
 				break;
 			case '2':
-				addToLog(e.getKeyChar()+"");
+				takeAway(2);
 				break;
 			case '3':
-				addToLog(e.getKeyChar()+"");
+				takeAway(3);
 				break;
 			default:
 			}
 		}
 	}
-	
+
 	private class WinowEventListener implements WindowListener{
 		@Override
 		public void windowActivated(WindowEvent e) {
@@ -238,7 +280,7 @@ public class GameWindow extends JFrame {
 		}
 		@Override
 		public void windowClosing(WindowEvent e) {
-			//TODO
+			//TODO ASK do you want to save the memory
 		}
 		@Override
 		public void windowDeactivated(WindowEvent e) {

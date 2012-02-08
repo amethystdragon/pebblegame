@@ -1,13 +1,12 @@
 package main;
 
+import gameboard.GameBoard;
 import gameboard.GameWindow;
 
 public class Driver {
 
 	public static void main(String[] args){
-		GameWindow game = new GameWindow();
-		
-		//Set dummy data value
-		game.setProgress(50);
+		GameBoard board = new GameBoard();
+		new GameWindow(board);
 	}
 }
