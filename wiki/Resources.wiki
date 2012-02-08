@@ -1,7 +1,7 @@
-#summary One-sentence summary of this page.
 #labels Links,Phase-Design
+#page of links so we dont have to keep looking things up
 
-= Introduction =
+= Links =
 Various links that are helpful to understanding the hows and whys.
 
  * [http://delphi.about.com/od/gameprogramming/a/aigamesample.htm Original Idea and Rules]
