@@ -1,5 +1,5 @@
 package gameboard;
 
-public class Gameboard {
+public class GameBoard {
 
 }

@@ -1,6 +1,6 @@
 package ai.heuristics;
 
-import gameboard.Gameboard;
+import gameboard.GameBoard;
 
 public abstract class Heuristics {
 	
@@ -9,11 +9,11 @@ public abstract class Heuristics {
 		
 	}
 	
-	public int run(Gameboard board, String heuristic){
+	public int run(GameBoard board, String heuristic){
 		return 0;
 		
 	}
 	
 		
-	public abstract int choose(Gameboard board);
+	public abstract int choose(GameBoard board);
 }

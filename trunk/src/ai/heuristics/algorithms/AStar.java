@@ -1,17 +1,17 @@
 package ai.heuristics.algorithms;
 
-import gameboard.Gameboard;
+import gameboard.GameBoard;
 import ai.heuristics.*;
 
-public class Astar extends Heuristics {
+public class AStar extends Heuristics {
 	
-	public Astar(){
+	public AStar(){
 		
 	}
 
 
 	@Override
-	public int choose(Gameboard board) {
+	public int choose(GameBoard board) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
