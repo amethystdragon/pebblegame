@@ -79,7 +79,7 @@ public class GameWindow extends JFrame {
 		setProgress(this.board.getPebblesLeft());
 		
 		//Welcome message
-		log.append("Welcome! For how to play press r.");
+		log.append("Welcome! For how to play press r.\n");
 	}
 
 	private void addMenuBar(){
@@ -238,9 +238,11 @@ public class GameWindow extends JFrame {
 				takeAway(3);
 
 			} else if(e.getActionCommand().equals("New")){
-				log.setText("Starting new game");
+				log.setText("Starting new game!\n");
 				log.setForeground(Color.black);
-				board.newGame(); 
+				board.newGame();
+				setProgress(board.getPebblesLeft());
+				gameOver = false;
 			} else if(e.getActionCommand().equals("Close")){	
 				System.exit(NORMAL);
 			} else if(e.getActionCommand().equals("Rules")){
