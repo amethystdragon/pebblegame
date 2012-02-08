@@ -7,9 +7,7 @@ public class GameBoard {
 	private int pebblesLeft;
 	
 	public GameBoard(){
-		Random r = new Random();
-		int starting = r.nextInt(50) + 50;
-		this.pebblesLeft = starting;
+		newGame();
 	}
 	
 	public GameBoard(int starting){
@@ -26,6 +24,8 @@ public class GameBoard {
 	}
 
 	public void newGame() { 
-			
+		Random r = new Random();
+		int starting = r.nextInt(50) + 50;
+		this.pebblesLeft = starting;
 	}
 }
