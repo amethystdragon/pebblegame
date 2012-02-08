@@ -3,6 +3,7 @@ package gameboard;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -57,9 +58,13 @@ public class GameWindow extends JFrame {
 		setResizable(RESIZABLE);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		addWindowListener(new WinowEventListener());
+		setLocation((Toolkit.getDefaultToolkit().getScreenSize().width-WIDTH)/2, 
+				(Toolkit.getDefaultToolkit().getScreenSize().height-HEIGHT)/2);
 		//Sets the layout to be null
 		setLayout(null);
 
+		
+		
 		//Adds elements
 		addMenuBar();
 		addLogWindow();
@@ -72,6 +77,9 @@ public class GameWindow extends JFrame {
 
 		this.board = board;
 		setProgress(this.board.getPebblesLeft());
+		
+		//Welcome message
+		log.append("Welcome! For how to play press r.");
 	}
 
 	private void addMenuBar(){
@@ -236,9 +244,11 @@ public class GameWindow extends JFrame {
 			} else if(e.getActionCommand().equals("Close")){	
 				System.exit(NORMAL);
 			} else if(e.getActionCommand().equals("Rules")){
-				JOptionPane.showMessageDialog(null, "Goal:\nForce the other player to pick up the last pebble.\n"
-						+ "\nHow to Play:\nChoose one, two or three tiles to pick up. "
-						+ "\nThe player that is forced to pick up the last pebble loses.\n");
+				JOptionPane.showMessageDialog(null, "Goal:\nGiven a random number of pebbles, force the other player to pick up the last pebble.\n"
+						+ "\nHow to Play:\nChoose one, two or three pebbles to pick up. "
+						+ "\nThe player that is forced to pick up the last pebble loses."
+						+ "\nThe status bar at the bottom of the screen displays the number of pebbles left in the pile."
+						);
 			} else if(e.getActionCommand().equals("About")){
 				JOptionPane.showMessageDialog(null, "Created by:\nKarl Schmidbauer and Ben Ebert\n\nVersion:\n"+VERSION);
 			} else if(e.getActionCommand().equals("Options")){
