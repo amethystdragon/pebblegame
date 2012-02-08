@@ -246,10 +246,12 @@ public class GameWindow extends JFrame {
 			} else if(e.getActionCommand().equals("Close")){	
 				System.exit(NORMAL);
 			} else if(e.getActionCommand().equals("Rules")){
-				JOptionPane.showMessageDialog(null, "Goal:\nGiven a random number of pebbles, force the other player to pick up the last pebble.\n"
-						+ "\nHow to Play:\nChoose one, two or three pebbles to pick up. "
+				JOptionPane.showMessageDialog(null, "Goal:\nGiven a random number of pebbles, force the other \nplayer to pick up the last pebble.\n"
+						+ "\nRules:\nChoose one, two or three pebbles to pick up. "
 						+ "\nThe player that is forced to pick up the last pebble loses."
-						+ "\nThe status bar at the bottom of the screen displays the number of pebbles left in the pile."
+						+ "\nThe status bar at the bottom of the screen displays the \nnumber of pebbles left in the pile."
+						+ "\n\nHow to Play: \nPress the button corresponding to the number of pebbles \nyou want to remove,"
+						+ "or press the key on the keyboard."
 						);
 			} else if(e.getActionCommand().equals("About")){
 				JOptionPane.showMessageDialog(null, "Created by:\nKarl Schmidbauer and Ben Ebert\n\nVersion:\n"+VERSION);
