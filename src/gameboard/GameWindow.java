@@ -3,6 +3,7 @@ package gameboard;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,6 +12,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -158,20 +160,26 @@ public class GameWindow extends JFrame {
 		buttonPanel.add(createButtons(1));
 		buttonPanel.add(createButtons(2));
 		buttonPanel.add(createButtons(3));
-
+		
 		//Add the panel
 		this.add(buttonPanel);
 	}
 
 	private JButton createButtons(int number){
-		JButton button = new JButton();
-		button.setText(""+number);
+		ImageIcon pic = null;
+		if(number==1) pic = new ImageIcon("images/singlePebble.jpg");
+		else if(number==2) pic = new ImageIcon("images/doublePebble.jpg");
+		else if(number==3) pic = new ImageIcon("images/tripplePebble.jpg");
+		JButton button = new JButton(pic);
 		button.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 60));
 		button.setToolTipText("Pick up "+number+" pebble(s)");
-		button.setBackground(Color.white);
-		button.setForeground(Color.black);
 		button.setActionCommand(""+number);
 		button.addActionListener(new ButtonListener());
+		
+		
+		
+		
+		
 		button.addKeyListener(new KeyboardListener());
 		return button;
 	}
