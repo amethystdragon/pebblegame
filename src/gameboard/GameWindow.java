@@ -28,6 +28,7 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 
 import ai.AI;
+import ai.q.Q;
 import ai.reinforcement.ReinforcementAI;
 
 public class GameWindow extends JFrame {
@@ -52,8 +53,9 @@ public class GameWindow extends JFrame {
 	private JScrollPane scrollable;
 	private GameBoard board;
 	private boolean gameOver = false;
-	private AI computer = new ReinforcementAI();
-	private AI computer2 = new ReinforcementAI();
+	private AI computer = new Q();
+	private AI computer2 = new Q();
+	
 	
 	private enum mode {twoPlayer, onePlayer, noPlayer}
 	
