@@ -5,12 +5,12 @@ import ai.AI;
 
 public class ReinforcementAI extends AI{
 
-	int[] memory;
+	int[] weights;
 	ReinforcementNode currentNode;
 	
 	public ReinforcementAI(){
 		super();
-		memory = new int[101];
+		weights = new int[101];
 	}
 	
 	public int choose(GameBoard board){
@@ -19,12 +19,10 @@ public class ReinforcementAI extends AI{
 		
 		int choice = 1;
 		
-		if(currentNode.getValue()-3 >= 4)
-			choice = (choice <= memory[currentNode.getValue()-3]) ? choice : 3;
-		if(currentNode.getValue()-3 >= 3)
-			choice = (choice <= memory[currentNode.getValue()-2]) ? choice : 2;
-		if(currentNode.getValue()-1 >= 2)
-			choice = (choice <= memory[currentNode.getValue()-1]) ? choice : 1;
+		if(currentNode.getValue()-3 >= 1)
+			choice = (weights[currentNode.getValue()-2] >= weights[currentNode.getValue()-3]) ? 2 : 3;
+		if(currentNode.getValue()-1 >= 1)
+			choice = (weights[currentNode.getValue()-choice] >= weights[currentNode.getValue()-1]) ? choice : 1;
 		
 		return choice;
 	}
@@ -33,18 +31,18 @@ public class ReinforcementAI extends AI{
 		boolean even = false;
 		while(currentNode != null){
 			if(even){
-				if(win) memory[currentNode.getValue()]++;
-				else memory[currentNode.getValue()]--;
+				if(win) weights[currentNode.getValue()]++;
+				else weights[currentNode.getValue()]--;
 			}else{
-				if(!win) memory[currentNode.getValue()]++;
-				else memory[currentNode.getValue()]--;
+				if(!win) weights[currentNode.getValue()]++;
+				else weights[currentNode.getValue()]--;
 			}
 			even = (even) ? false : true;
 			currentNode = currentNode.getParent();
 		}
 		System.out.println("----------------------------------------------------");
-		for(int i = 0; i<memory.length-3; i+=4){
-			System.out.println(i+": "+memory[i]+"\t"+(i+1)+": "+memory[i+1]+"\t"+(i+2)+": "+memory[i+2]+"\t"+(i+3)+": "+memory[i+3]);
+		for(int i = 0; i<weights.length-3; i+=4){
+			System.out.println(i+": "+weights[i]+"\t"+(i+1)+": "+weights[i+1]+"\t"+(i+2)+": "+weights[i+2]+"\t"+(i+3)+": "+weights[i+3]);
 		}
 	}
 }

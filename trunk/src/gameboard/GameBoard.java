@@ -10,12 +10,15 @@ public class GameBoard {
 	
 	private players currentPlayer;
 	
+	private int max = 100;
+	
 	public GameBoard(){
 		newGame();
 	}
 	
 	public GameBoard(int starting){
-		if(starting > 50) this.pebblesLeft = starting;
+		max = starting;
+		newGame();
 	}
 
 	public int getPebblesLeft() {
@@ -28,9 +31,7 @@ public class GameBoard {
 	}
 
 	public void newGame() { 
-		Random r = new Random();
-		int starting = r.nextInt(50) + 50;
-		this.pebblesLeft = starting;
+		this.pebblesLeft = max;
 		currentPlayer = players.player1;
 	}
 	
