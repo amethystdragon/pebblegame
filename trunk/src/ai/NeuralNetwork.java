@@ -2,10 +2,10 @@ package ai;
 
 import gameboard.GameBoard;
 
-public class neuralNetwork extends AI {
+public class NeuralNetwork extends AI {
 
 	
-	public neuralNetwork(){
+	public NeuralNetwork(){
 		
 	}
 	
