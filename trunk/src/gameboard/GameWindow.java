@@ -10,10 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
-import javax.jws.Oneway;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -29,10 +26,9 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
-import javax.swing.plaf.basic.BasicBorders.RadioButtonBorder;
 
 import ai.AI;
-import ai.Random;
+import ai.reinforcement.ReinforcementAI;
 
 public class GameWindow extends JFrame {
 	public static final double VERSION = 1.0;
@@ -56,7 +52,8 @@ public class GameWindow extends JFrame {
 	private JScrollPane scrollable;
 	private GameBoard board;
 	private boolean gameOver = false;
-	private AI computer = new Random();
+	private AI computer = new ReinforcementAI();
+	private AI computer2 = new ReinforcementAI();
 	
 	private enum mode {twoPlayer, onePlayer, noPlayer}
 	
@@ -73,7 +70,6 @@ public class GameWindow extends JFrame {
 		setSize(WIDTH, HEIGHT);
 		setResizable(RESIZABLE);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		addWindowListener(new WinowEventListener());
 		setLocation((Toolkit.getDefaultToolkit().getScreenSize().width-WIDTH)/2, 
 				(Toolkit.getDefaultToolkit().getScreenSize().height-HEIGHT)/2);
 		//Sets the layout to be null
@@ -258,7 +254,10 @@ public class GameWindow extends JFrame {
 		log.setForeground(Color.red);
 		log.append("GAME OVER: "+msg);
 		gameOver = true;
+		computer.gameOver((board.getCurrentPlayer() == players.player2) ? false : true);
+		
 	}
+
 
 	private void takeAway(int remove){
 		if(gameOver) return;
@@ -268,36 +267,30 @@ public class GameWindow extends JFrame {
 			setProgress(board.getPebblesLeft());
 			board.switchPlayers();
 			addToLog((board.getCurrentPlayer() == players.player1) ? "Player 1, it is your turn." : "Player 2, it is your turn.");
-			
+			int computersMove = computer.choose(board);
+			int computer2sMove = computer2.choose(board);
 			switch(currentMode){
 			case onePlayer:
-				if(board.getCurrentPlayer() == players.player2) getComputersMove();
+				if(board.getCurrentPlayer() == players.player2) takeAway(computersMove);
 				break;
 			case noPlayer:
-				getComputersMove();
+				if(board.getCurrentPlayer() == players.player2) takeAway(computersMove);
+				else takeAway(computer2sMove);
 				break;
 			}
-			
-			
 		} catch (GameOver e) {
 			gameOver(e.getMessage());
 		}
 	}
 
-
-	private void getComputersMove() {
-		takeAway(computer.choose(board));
-	}
-
-
 	private class ButtonListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(e.getActionCommand().equals("1") && (board.getCurrentPlayer()!=players.player2 && currentMode != mode.onePlayer) && currentMode != mode.noPlayer){
+			if(e.getActionCommand().equals("1") && !(board.getCurrentPlayer()==players.player2 && currentMode == mode.onePlayer) && !(currentMode == mode.noPlayer)){
 				takeAway(1);
-			} else if(e.getActionCommand().equals("2") && (board.getCurrentPlayer()!=players.player2 && currentMode != mode.onePlayer) && currentMode != mode.noPlayer){
+			} else if(e.getActionCommand().equals("2") && !(board.getCurrentPlayer()==players.player2 && currentMode == mode.onePlayer) && !(currentMode == mode.noPlayer)){
 				takeAway(2);
-			} else if(e.getActionCommand().equals("3") && (board.getCurrentPlayer()!=players.player2 && currentMode != mode.onePlayer) && currentMode != mode.noPlayer){
+			} else if(e.getActionCommand().equals("3") && !(board.getCurrentPlayer()==players.player2 && currentMode == mode.onePlayer) && !(currentMode == mode.noPlayer)){
 				takeAway(3);
 			} else if(e.getActionCommand().equals("New")){
 				log.setText("Starting new game!\n");
@@ -363,31 +356,6 @@ public class GameWindow extends JFrame {
 				break;
 			default:
 			}
-		}
-	}
-
-	private class WinowEventListener implements WindowListener{
-		@Override
-		public void windowActivated(WindowEvent e) {
-		}
-		@Override
-		public void windowClosed(WindowEvent e) {
-		}
-		@Override
-		public void windowClosing(WindowEvent e) {
-			//TODO ASK do you want to save the memory
-		}
-		@Override
-		public void windowDeactivated(WindowEvent e) {
-		}
-		@Override
-		public void windowDeiconified(WindowEvent e) {
-		}
-		@Override
-		public void windowIconified(WindowEvent e) {
-		}
-		@Override
-		public void windowOpened(WindowEvent e) {
 		}
 	}
 }
