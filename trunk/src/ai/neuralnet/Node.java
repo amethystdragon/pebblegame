@@ -10,10 +10,6 @@ public class Node {
 		weight = 0;
 		this.parent = parent;
 	}
-	
-	public Node(int i, Node[] minimaxNodes) {
-		// TODO Auto-generated constructor stub
-	}
 
 	public int getWeight(){
 		return weight;
