@@ -29,43 +29,99 @@ import javax.swing.KeyStroke;
 
 import ai.AI;
 import ai.q.Q;
+import ai.randomai.RandomAI;
 import ai.reinforcement.ReinforcementAI;
 
+
 public class GameWindow extends JFrame {
-	public static final double VERSION = 1.0;
 	/**
-	 * 
+	 * Version Id
+	 */
+	public static final double VERSION = 3.0;
+	/**
+	 * Windows locked height and width
 	 */
 	private final int HEIGHT = 600, WIDTH = 400;
 	/**
-	 * 
+	 * Do not allow resizing
 	 */
 	private final boolean RESIZABLE = false;
 	/**
-	 * 
+	 * Visual representation of the number of pabbles left
 	 */
 	private JProgressBar progress;
 	/**
-	 * 
+	 * Area to display log text.
 	 */
 	private JTextArea log;
+	/**
+	 * JLabel showing the number of pebbles under the progress bar
+	 */
 	private JLabel status;
+	/**
+	 * Scroll pane containing the log
+	 */
 	private JScrollPane scrollable;
+	/**
+	 * Game board instance
+	 */
 	private GameBoard board;
+	/**
+	 * Tracks if the game has ended
+	 */
 	private boolean gameOver = false;
-	private AI computer = new Q();
-	private AI computer2 = new Q();
+	/**
+	 * Storage for the random AI 1 instance
+	 */
+	private AI randomAI1 = new RandomAI();
+	/**
+	 * Storage for the random AI 2 instance
+	 */
+	private AI randomAI2 = new RandomAI();
+	/**
+	 * Storage for the reinforcement AI 1 instance
+	 */
+	private AI reinforcementAI1 = new ReinforcementAI();
+	/**
+	 * Storage for the reinforcement AI 1 instance
+	 */
+	private AI reinforcementAI2 = new ReinforcementAI();
+	/**
+	 * Storage for the queue AI 1 instance
+	 */
+	private AI queueAI1 = new Q();
+	/**
+	 * Storage for the queue AI 2 instance
+	 */
+	private AI queueAI2 = new Q();
+	/**
+	 * Current AI solution 1
+	 */
+	private AI computer1 = reinforcementAI1;
+	/**
+	 * Current AI solution 2
+	 */
+	private AI computer2 = reinforcementAI2;
 	
-	
+	/**
+	 * @author Karl Schmidbauer <schmidbauerk@msoe.edu>
+	 *
+	 */
 	private enum mode {twoPlayer, onePlayer, noPlayer}
 	
-	private mode currentMode;
-
 	/**
-	 * 
+	 * Stores the current game mode
+	 */
+	private mode currentMode;
+	/**
+	 * Generated serial version ID
 	 */
 	private static final long serialVersionUID = -7339354437547422011L;
 
+	/**
+	 * Creates a new instance and sets-up the window
+	 * @param board - game board instance
+	 */
 	public GameWindow(GameBoard board){
 		//Sets the window properties
 		super("GATTA TIPNE KHEL (Pebble Game)");
@@ -76,27 +132,25 @@ public class GameWindow extends JFrame {
 				(Toolkit.getDefaultToolkit().getScreenSize().height-HEIGHT)/2);
 		//Sets the layout to be null
 		setLayout(null);
-
-		
-		
 		//Adds elements
 		addMenuBar();
 		addLogWindow();
 		addButtons();
 		addStatusBar();
 		addStatus();
-
 		//Sets visible
 		setVisible(true);
-
+		//Stores the board
 		this.board = board;
 		setProgress(this.board.getPebblesLeft());
-		
 		//Welcome message
 		addToLog("Welcome! For how to play press r.\n");
 		addToLog("Player 1, it is your turn.");
 	}
 
+	/**
+	 * Initilizes the menubar
+	 */
 	private void addMenuBar(){
 		JMenuBar menu = new JMenuBar();
 		JMenuItem item; //Storage item
@@ -118,13 +172,12 @@ public class GameWindow extends JFrame {
 		//Options Menu
 		JMenu options = new JMenu("Options");
 		//a group of radio button menu items
-		ButtonGroup group = new ButtonGroup();
+		ButtonGroup modeGroup = new ButtonGroup();
 		//No players
 		JRadioButtonMenuItem gameMode = new JRadioButtonMenuItem("No Players");
-		currentMode = mode.onePlayer;
 		gameMode.setActionCommand("AI");
 		gameMode.addActionListener(new ButtonListener());
-		group.add(gameMode);
+		modeGroup.add(gameMode);
 		options.add(gameMode);
 		//Single Player
 		gameMode = new JRadioButtonMenuItem("Single Player");
@@ -132,16 +185,46 @@ public class GameWindow extends JFrame {
 		currentMode = mode.onePlayer;
 		gameMode.setActionCommand("SP");
 		gameMode.addActionListener(new ButtonListener());
-		group.add(gameMode);
+		modeGroup.add(gameMode);
 		options.add(gameMode);
 		//Multiplauer
 		gameMode = new JRadioButtonMenuItem("Multi Player");
-		currentMode = mode.onePlayer;
 		gameMode.setActionCommand("MP");
 		gameMode.addActionListener(new ButtonListener());
-		group.add(gameMode);
+		modeGroup.add(gameMode);
 		options.add(gameMode);
-		
+		//Add seperator
+		options.addSeparator();
+		//Use the random ai
+		ButtonGroup aiGroup = new ButtonGroup();
+		gameMode = new JRadioButtonMenuItem("Random AI");
+		gameMode.setActionCommand("Random");
+		gameMode.addActionListener(new ButtonListener());
+		aiGroup.add(gameMode);
+		options.add(gameMode);
+		//Use the queue ai
+		gameMode = new JRadioButtonMenuItem("Queue AI");
+		currentMode = mode.onePlayer;
+		gameMode.setActionCommand("Queue");
+		gameMode.addActionListener(new ButtonListener());
+		aiGroup.add(gameMode);
+		options.add(gameMode);
+		//Use the reinforencement ai
+		gameMode = new JRadioButtonMenuItem("Reinforcement AI");
+		gameMode.setSelected(true);
+		gameMode.setActionCommand("Reinforcement");
+		gameMode.addActionListener(new ButtonListener());
+		aiGroup.add(gameMode);
+		options.add(gameMode);
+		//Add a sperator
+		options.addSeparator();
+		//Add pebble count
+		JMenuItem max = new JMenuItem("Number of Pebbles");
+		max.setSelected(true);
+		max.setActionCommand("max");
+		max.addActionListener(new ButtonListener());
+		options.add(max);
+		//Add everything to the menu bar
 		menu.add(options);
 		
 		//Help menu
@@ -156,10 +239,17 @@ public class GameWindow extends JFrame {
 		help.add(item);
 		//Add the help menu to the menu bar
 		menu.add(help);
-
+		
+		//Adds the menu bar to the window
 		this.setJMenuBar(menu);
 	}
 
+	/**
+	 * Menu Item factory element
+	 * 
+	 * @param itemName
+	 * @return
+	 */
 	private JMenuItem createMenuItem(String itemName){
 		JMenuItem item = new JMenuItem(itemName);
 		item.addActionListener(new ButtonListener());
@@ -215,6 +305,7 @@ public class GameWindow extends JFrame {
 		button.addActionListener(new ButtonListener());
 		button.addKeyListener(new KeyboardListener());
 		button.setBackground(Color.white);
+		button.setName(""+number);
 		return button;
 	}
 
@@ -256,7 +347,7 @@ public class GameWindow extends JFrame {
 		log.setForeground(Color.red);
 		log.append("GAME OVER: "+msg);
 		gameOver = true;
-		computer.gameOver((board.getCurrentPlayer() == players.player2) ? false : true);
+		computer1.gameOver((board.getCurrentPlayer() == players.player2) ? false : true);
 		
 	}
 
@@ -269,7 +360,7 @@ public class GameWindow extends JFrame {
 			setProgress(board.getPebblesLeft());
 			board.switchPlayers();
 			addToLog((board.getCurrentPlayer() == players.player1) ? "Player 1, it is your turn." : "Player 2, it is your turn.");
-			int computersMove = computer.choose(board);
+			int computersMove = computer1.choose(board);
 			int computer2sMove = computer2.choose(board);
 			switch(currentMode){
 			case onePlayer:
@@ -300,7 +391,7 @@ public class GameWindow extends JFrame {
 				board.newGame();
 				setProgress(board.getPebblesLeft());
 				gameOver = false;
-				if(currentMode == mode.noPlayer) takeAway(computer.choose(board));
+				if(currentMode == mode.noPlayer) takeAway(computer1.choose(board));
 			} else if(e.getActionCommand().equals("Close")){	
 				System.exit(NORMAL);
 			} else if(e.getActionCommand().equals("Rules")){
@@ -319,7 +410,7 @@ public class GameWindow extends JFrame {
 				log.setForeground(Color.black);
 				board.newGame();
 				gameOver = false;
-				takeAway(computer.choose(board));
+				takeAway(computer1.choose(board));
 			} else if(e.getActionCommand().equals("SP")){
 				currentMode = mode.onePlayer;
 				log.setText("Starting new game!\n");
@@ -332,6 +423,20 @@ public class GameWindow extends JFrame {
 				log.setForeground(Color.black);
 				board.newGame();
 				gameOver = false;
+			} else if(e.getActionCommand().equals("Random")){
+				computer1 = randomAI1;
+				computer2 = randomAI2;
+			} else if(e.getActionCommand().equals("Queue")){
+				computer1 = queueAI1;
+				computer2 = queueAI2;
+			} else if(e.getActionCommand().equals("Reinforcement")){
+				computer1 = reinforcementAI1;
+				computer2 = reinforcementAI2;
+			} else if(e.getActionCommand().equals("max")){
+				try{
+				board = new GameBoard(Integer.parseInt(JOptionPane.showInputDialog(null, "Enter a number of pebbles to start with:")));
+				}catch(Exception ex){
+				}
 			} else{
 				addToLog(e.getActionCommand());
 			}
