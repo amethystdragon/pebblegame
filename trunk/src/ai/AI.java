@@ -4,6 +4,11 @@ import gameboard.GameBoard;
 
 public abstract class AI {
 
+	protected GameBoard game;
 	
-	public abstract int choose(GameBoard board);
+	
+	public int choose(GameBoard board){
+		this.game = board;
+		return 0;
+	}
 }

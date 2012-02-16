@@ -13,6 +13,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import javax.jws.Oneway;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -23,9 +25,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
+import javax.swing.plaf.basic.BasicBorders.RadioButtonBorder;
+
+import ai.AI;
+import ai.Random;
 
 public class GameWindow extends JFrame {
 	public static final double VERSION = 1.0;
@@ -49,6 +56,12 @@ public class GameWindow extends JFrame {
 	private JScrollPane scrollable;
 	private GameBoard board;
 	private boolean gameOver = false;
+	private AI computer = new Random();
+	
+	private enum mode {twoPlayer, onePlayer, noPlayer}
+	
+	private mode currentMode;
+
 	/**
 	 * 
 	 */
@@ -97,16 +110,42 @@ public class GameWindow extends JFrame {
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_MASK));
 		file.add(item);
 		file.addSeparator();
-		//Options
-		file.add(createMenuItem("Options"));
-		file.addSeparator();
 		//Close
 		item = createMenuItem("Close");
 		item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_MASK));
 		file.add(item);
 		//Add the file menu to the menu bar
 		menu.add(file);
-
+		
+		//Options Menu
+		JMenu options = new JMenu("Options");
+		//a group of radio button menu items
+		ButtonGroup group = new ButtonGroup();
+		//No players
+		JRadioButtonMenuItem gameMode = new JRadioButtonMenuItem("No Players");
+		currentMode = mode.onePlayer;
+		gameMode.setActionCommand("AI");
+		gameMode.addActionListener(new ButtonListener());
+		group.add(gameMode);
+		options.add(gameMode);
+		//Single Player
+		gameMode = new JRadioButtonMenuItem("Single Player");
+		gameMode.setSelected(true);
+		currentMode = mode.onePlayer;
+		gameMode.setActionCommand("SP");
+		gameMode.addActionListener(new ButtonListener());
+		group.add(gameMode);
+		options.add(gameMode);
+		//Multiplauer
+		gameMode = new JRadioButtonMenuItem("Multi Player");
+		currentMode = mode.onePlayer;
+		gameMode.setActionCommand("MP");
+		gameMode.addActionListener(new ButtonListener());
+		group.add(gameMode);
+		options.add(gameMode);
+		
+		menu.add(options);
+		
 		//Help menu
 		JMenu help = new JMenu("Help");
 		//Rules
@@ -229,20 +268,36 @@ public class GameWindow extends JFrame {
 			setProgress(board.getPebblesLeft());
 			board.switchPlayers();
 			addToLog((board.getCurrentPlayer() == players.player1) ? "Player 1, it is your turn." : "Player 2, it is your turn.");
+			
+			switch(currentMode){
+			case onePlayer:
+				if(board.getCurrentPlayer() == players.player2) getComputersMove();
+				break;
+			case noPlayer:
+				getComputersMove();
+				break;
+			}
+			
+			
 		} catch (GameOver e) {
 			gameOver(e.getMessage());
 		}
 	}
 
 
+	private void getComputersMove() {
+		takeAway(computer.choose(board));
+	}
+
+
 	private class ButtonListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(e.getActionCommand().equals("1")){
+			if(e.getActionCommand().equals("1") && (board.getCurrentPlayer()!=players.player2 && currentMode != mode.onePlayer) && currentMode != mode.noPlayer){
 				takeAway(1);
-			} else if(e.getActionCommand().equals("2")) {
+			} else if(e.getActionCommand().equals("2") && (board.getCurrentPlayer()!=players.player2 && currentMode != mode.onePlayer) && currentMode != mode.noPlayer){
 				takeAway(2);
-			} else if(e.getActionCommand().equals("3")) {
+			} else if(e.getActionCommand().equals("3") && (board.getCurrentPlayer()!=players.player2 && currentMode != mode.onePlayer) && currentMode != mode.noPlayer){
 				takeAway(3);
 			} else if(e.getActionCommand().equals("New")){
 				log.setText("Starting new game!\n");
@@ -250,6 +305,7 @@ public class GameWindow extends JFrame {
 				board.newGame();
 				setProgress(board.getPebblesLeft());
 				gameOver = false;
+				if(currentMode == mode.noPlayer) takeAway(computer.choose(board));
 			} else if(e.getActionCommand().equals("Close")){	
 				System.exit(NORMAL);
 			} else if(e.getActionCommand().equals("Rules")){
@@ -262,8 +318,25 @@ public class GameWindow extends JFrame {
 						);
 			} else if(e.getActionCommand().equals("About")){
 				JOptionPane.showMessageDialog(null, "Created by:\nKarl Schmidbauer and Ben Ebert\n\nVersion:\n"+VERSION);
-			} else if(e.getActionCommand().equals("Options")){
-				//TODO Options Window 1 or 2 players, heuristic
+			} else if(e.getActionCommand().equals("AI")){
+				currentMode = mode.noPlayer;
+				log.setText("Starting new game!\n");
+				log.setForeground(Color.black);
+				board.newGame();
+				gameOver = false;
+				takeAway(computer.choose(board));
+			} else if(e.getActionCommand().equals("SP")){
+				currentMode = mode.onePlayer;
+				log.setText("Starting new game!\n");
+				log.setForeground(Color.black);
+				board.newGame();
+				gameOver = false;
+			} else if(e.getActionCommand().equals("MP")){
+				currentMode = mode.twoPlayer;
+				log.setText("Starting new game!\n");
+				log.setForeground(Color.black);
+				board.newGame();
+				gameOver = false;
 			} else{
 				addToLog(e.getActionCommand());
 			}
@@ -277,6 +350,7 @@ public class GameWindow extends JFrame {
 		public void keyReleased(KeyEvent e) { }
 		@Override
 		public void keyTyped(KeyEvent e) {
+			if((board.getCurrentPlayer()==players.player2 && currentMode == mode.onePlayer) && currentMode == mode.noPlayer) return;
 			switch(e.getKeyChar()){
 			case '1':
 				takeAway(1);
