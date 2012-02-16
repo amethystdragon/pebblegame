@@ -10,6 +10,10 @@ public class NeuronLayer {
 	
 	public NeuronLayer(int numNeurons, int numInputsPerNeuron){
 		this.numNeurons=numNeurons;
+		
+		for(int i = 0; i < numNeurons; i++){
+			neuronList.add(new Neurons(numInputsPerNeuron));
+		}
 	}
 	
 	public int getNumNeurons(){
