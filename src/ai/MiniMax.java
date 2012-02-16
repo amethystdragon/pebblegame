@@ -2,10 +2,10 @@ package ai;
 
 import gameboard.GameBoard;
 
-public class minAndMax extends AI{
+public class MiniMax extends AI{
 
 	
-	public minAndMax(){
+	public MiniMax(){
 		
 	}
 	
