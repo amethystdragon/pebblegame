@@ -23,20 +23,39 @@ public class Q extends AI {
 	public Q(){
 		matrix = new double[numStates][numActions];
 		rand = new Random();
+		
+		matrix[1][0]=-100;
+		matrix[2][0]=100;
+		matrix[2][1]=-100;
+		matrix[3][0]=-100;
+		matrix[3][1]=100;
+		matrix[3][2]=-100;
+		matrix[4][1]=-100;
+		matrix[4][2]=100;
+		matrix[5][2]=-100;
 	}
 	
 	public int choose(GameBoard board){
 
 		
 		int state = board.getPebblesLeft();
+		int tempChoice = 0;
 		QItUp(state, 3);
 		QItUp(state, 2);
 		QItUp(state, 1);
 		
-		int tempChoice = (int)matrix[state][4];
-		return tempChoice;
+		if(state==2){
+			tempChoice = 1;
+		}else if(state==1){
+			tempChoice = 1;
+		}else if(state==0){
+			tempChoice = 0;
+		}else{
+			tempChoice = (int)matrix[state][4];
+		}
 		
 		
+		return tempChoice;	
 	}
 	
 	@Override
