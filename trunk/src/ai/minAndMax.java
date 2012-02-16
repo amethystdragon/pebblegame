@@ -1,16 +1,13 @@
-package ai.heuristics.algorithms;
+package ai;
 
 import gameboard.GameBoard;
-import ai.heuristics.Heuristics;
 
-public class neuralNetwork extends Heuristics {
+public class minAndMax extends AI{
 
 	
-	public neuralNetwork(){
+	public minAndMax(){
 		
 	}
-	
-	
 	
 	
 	
