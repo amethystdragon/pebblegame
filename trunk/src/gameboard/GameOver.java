@@ -1,5 +1,7 @@
 package gameboard;
 
+import gameboard.GameBoard.players;
+
 public class GameOver extends Exception {
 	
 	/**
@@ -13,5 +15,9 @@ public class GameOver extends Exception {
 
 	public GameOver() {
 		super();
+	}
+
+	public GameOver(players currentPlayer) {
+		super((currentPlayer == players.player1) ? "Player 1 Lost" : "Player 2 Lost");
 	}
 }

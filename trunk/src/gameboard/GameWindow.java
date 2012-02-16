@@ -1,5 +1,7 @@
 package gameboard;
 
+import gameboard.GameBoard.players;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -80,7 +82,8 @@ public class GameWindow extends JFrame {
 		setProgress(this.board.getPebblesLeft());
 		
 		//Welcome message
-		log.append("Welcome! For how to play press r.\n");
+		addToLog("Welcome! For how to play press r.\n");
+		addToLog("Player 1, it is your turn.");
 	}
 
 	private void addMenuBar(){
@@ -137,7 +140,6 @@ public class GameWindow extends JFrame {
 
 		//Sets up the scroll pane
 		scrollable = new JScrollPane(log);
-		scrollable.setAutoscrolls(true);
 		scrollable.addKeyListener(new KeyboardListener());
 		scrollable.setFocusTraversalKeysEnabled(false);
 		scrollable.setFocusable(true);
@@ -174,12 +176,8 @@ public class GameWindow extends JFrame {
 		button.setToolTipText("Pick up "+number+" pebble(s)");
 		button.setActionCommand(""+number);
 		button.addActionListener(new ButtonListener());
-		
-		
-		
-		
-		
 		button.addKeyListener(new KeyboardListener());
+		button.setBackground(Color.white);
 		return button;
 	}
 
@@ -213,12 +211,13 @@ public class GameWindow extends JFrame {
 
 	private void addToLog(String msg){
 		scrollable.setFocusable(true);
+		log.setCaretPosition(log.getText().length());
 		log.append(msg+'\n');
 	}
 
-	private void gameOver() {
+	private void gameOver(String msg) {
 		log.setForeground(Color.red);
-		log.append("GAME OVER");
+		log.append("GAME OVER: "+msg);
 		gameOver = true;
 	}
 
@@ -228,8 +227,10 @@ public class GameWindow extends JFrame {
 			addToLog("Removing :" + remove);
 			board.takeAway(remove);
 			setProgress(board.getPebblesLeft());
+			board.switchPlayers();
+			addToLog((board.getCurrentPlayer() == players.player1) ? "Player 1, it is your turn." : "Player 2, it is your turn.");
 		} catch (GameOver e) {
-			gameOver();
+			gameOver(e.getMessage());
 		}
 	}
 
@@ -243,7 +244,6 @@ public class GameWindow extends JFrame {
 				takeAway(2);
 			} else if(e.getActionCommand().equals("3")) {
 				takeAway(3);
-
 			} else if(e.getActionCommand().equals("New")){
 				log.setText("Starting new game!\n");
 				log.setForeground(Color.black);
