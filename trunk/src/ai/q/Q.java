@@ -49,7 +49,7 @@ public class Q extends AI {
 		}else if(state==1){
 			tempChoice = 1;
 		}else if(state==0){
-			tempChoice = 0;
+			tempChoice = 0; 
 		}else{
 			tempChoice = (int)matrix[state][4];
 		}
