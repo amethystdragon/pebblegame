@@ -1,19 +1,12 @@
 
 package ai.neuralnet;
 
-import java.util.ArrayList;
-
-import ai.AI;
 import gameboard.GameBoard;
+import ai.AI;
 
 public class NeuralNetwork extends AI {
 
-	private ArrayList nodeNetwork;
-	
-	private int numberOfNodes;
-	
 	public NeuralNetwork(int numNodes){
-		numberOfNodes = numNodes;
 	}
 	
 	

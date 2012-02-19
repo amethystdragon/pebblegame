@@ -33,6 +33,11 @@ import ai.randomai.RandomAI;
 import ai.reinforcement.ReinforcementAI;
 
 
+/**
+ * Extends JFram to provide a GUI for the player to view and use to play the game
+ * @author Karl Schmidbauer <schmidbauerk@msoe.edu>
+ *
+ */
 public class GameWindow extends JFrame {
 	/**
 	 * Version Id
@@ -247,8 +252,8 @@ public class GameWindow extends JFrame {
 	/**
 	 * Menu Item factory element
 	 * 
-	 * @param itemName
-	 * @return
+	 * @param itemName  name of the item
+	 * @return - created menu item
 	 */
 	private JMenuItem createMenuItem(String itemName){
 		JMenuItem item = new JMenuItem(itemName);
@@ -257,6 +262,9 @@ public class GameWindow extends JFrame {
 		return item;
 	}
 
+	/**
+	 * Initilizes and addes a log window to the GUI
+	 */
 	private void addLogWindow(){
 		//Sets up the log
 		log = new JTextArea();
@@ -278,6 +286,9 @@ public class GameWindow extends JFrame {
 		this.add(scrollable);
 	}
 
+	/**
+	 * Adds buttons to the GUI
+	 */
 	private void addButtons(){
 		JPanel buttonPanel = new JPanel(new GridLayout(1, 3));
 		buttonPanel.setSize(WIDTH-50, 100);
@@ -293,6 +304,11 @@ public class GameWindow extends JFrame {
 		this.add(buttonPanel);
 	}
 
+	/**
+	 * Uses a template to create buttons to return to the user
+	 * @param number - buttons number
+	 * @return -newly created button
+	 */
 	private JButton createButtons(int number){
 		ImageIcon pic = null;
 		if(number==1) pic = new ImageIcon("images/singlePebble.jpg");
@@ -309,6 +325,9 @@ public class GameWindow extends JFrame {
 		return button;
 	}
 
+	/**
+	 * Creates, initializes, and adds a status bar to the GUI
+	 */
 	private void addStatusBar(){
 		progress = new JProgressBar(JProgressBar.HORIZONTAL, 0, 100);
 		progress.setSize(WIDTH-50, 25);
@@ -320,6 +339,9 @@ public class GameWindow extends JFrame {
 		this.add(progress);
 	}
 
+	/**
+	 * Adds a status label to the GUI
+	 */
 	private void addStatus() {
 		status = new JLabel();
 		status.setText(0+"");
@@ -331,18 +353,30 @@ public class GameWindow extends JFrame {
 		add(status);
 	}
 
+	/**
+	 * Sets the current progress of the game
+	 * @param value - how many pebbles are left
+	 */
 	public void setProgress(int value){
 		progress.setValue(value);
 		progress.setToolTipText("There are "+value+" pebles left");
 		status.setText(value+"");
 	}
 
+	/**
+	 * Adds a message and a new line to the and auto scrolls it
+	 * @param msg - message to add to the log
+	 */
 	private void addToLog(String msg){
 		scrollable.setFocusable(true);
 		log.setCaretPosition(log.getText().length());
 		log.append(msg+'\n');
 	}
 
+	/**
+	 * Handles a game over event
+	 * @param msg - game over message
+	 */
 	private void gameOver(String msg) {
 		log.setForeground(Color.red);
 		log.append("GAME OVER: "+msg);
@@ -352,16 +386,24 @@ public class GameWindow extends JFrame {
 	}
 
 
+	/**
+	 * How many pebbles to take away.
+	 * Also asks the AI how many pebbles it wants to take away
+	 * @param remove - number of pebbles to remove
+	 */
 	private void takeAway(int remove){
 		if(gameOver) return;
 		try {
 			addToLog("Removing :" + remove);
 			board.takeAway(remove);
 			setProgress(board.getPebblesLeft());
+			//Sets the current players turn
 			board.switchPlayers();
+			//Adds to the log whose turn it is
 			addToLog((board.getCurrentPlayer() == players.player1) ? "Player 1, it is your turn." : "Player 2, it is your turn.");
 			int computersMove = computer1.choose(board);
 			int computer2sMove = computer2.choose(board);
+			//Handles multiple game modes (0-2 players)
 			switch(currentMode){
 			case onePlayer:
 				if(board.getCurrentPlayer() == players.player2) takeAway(computersMove);
@@ -371,11 +413,17 @@ public class GameWindow extends JFrame {
 				else takeAway(computer2sMove);
 				break;
 			}
+			//Handles game over events
 		} catch (GameOver e) {
 			gameOver(e.getMessage());
 		}
 	}
 
+	/**
+	 * Button listener for all buttons and menu items
+	 * @author Karl Schmidbauer <schmidbauerk@msoe.edu>
+	 *
+	 */
 	private class ButtonListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -443,6 +491,11 @@ public class GameWindow extends JFrame {
 		}
 	}
 
+	/**
+	 * Listens for keyboard input from the user as to how many pebbles to remove.
+	 * @author Karl Schmidbauer <schmidbauerk@msoe.edu>
+	 *
+	 */
 	private class KeyboardListener implements KeyListener{
 		@Override
 		public void keyPressed(KeyEvent e) { }

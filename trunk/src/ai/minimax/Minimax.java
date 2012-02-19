@@ -23,7 +23,7 @@ public abstract class Minimax extends AI implements Cloneable {
 	public void makePerfectMove(int maxSearchDepth) {
 		if (maxSearchDepth == 0) return;
 
-		LinkedList moves = this.listAllLegalMoves();
+		LinkedList<?> moves = this.listAllLegalMoves();
 		if (moves.isEmpty()) {
 			this.staleMate();
 			return;
@@ -57,7 +57,7 @@ public abstract class Minimax extends AI implements Cloneable {
 				|| currentScore == Minimax.MAX_HAS_WON) {
 			return currentScore;
 		}
-		LinkedList moves = this.listAllLegalMoves();
+		LinkedList<?> moves = this.listAllLegalMoves();
 		if (moves.isEmpty()) {
 			return Minimax.STALE_MATE;
 		}
@@ -111,7 +111,7 @@ public abstract class Minimax extends AI implements Cloneable {
 
 	public abstract int getCurrentScore();
 
-	public abstract LinkedList listAllLegalMoves();
+	public abstract LinkedList<?> listAllLegalMoves();
 
 	public abstract void moveAction(Object move);
 

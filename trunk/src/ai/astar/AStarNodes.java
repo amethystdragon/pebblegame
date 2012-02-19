@@ -2,9 +2,7 @@ package ai.astar;
 
 import java.util.ArrayList;
 
-import ai.neuralnet.Node;
-
-public class AStarNodes implements Comparable {
+public class AStarNodes implements Comparable<Object> {
 
 	
 	private AStarNodes parent;
@@ -19,7 +17,7 @@ public class AStarNodes implements Comparable {
 	
 	private int learningCost;
 	
-	private int value;
+//	private int value;
 	
 	
 	public AStarNodes(int value, AStarNodes parent, int pathCost, int costToGoal){
@@ -79,7 +77,6 @@ public class AStarNodes implements Comparable {
 	
 	@Override
 	public int compareTo(Object arg0) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
