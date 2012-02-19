@@ -6,11 +6,11 @@ public class NeuralNet {
 	
 	private int numInputs;
 	
-	private int numOutputs;
+//	private int numOutputs;
 	
 	private int numHiddenLayers;
 	
-	private int neuronsPerHiddenLayer;
+//	private int neuronsPerHiddenLayer;
 	
 	private ArrayList<NeuronLayer> neuronLayers;
 	
@@ -39,7 +39,7 @@ public class NeuralNet {
 		for(int i = 0; i < numHiddenLayers + 1; i++){
 			for(int j = 0; j < neuronLayers.get(i).getNumNeurons(); j++){
 				for(int k = 0; k < neuronLayers.get(i).getNeuronList().get(j).getNumInputs(); k++){
-					weights.add(neuronLayers.get(i).getNeuronList().get(j).getWeights(k));
+//					weights.add(neuronLayers.get(i).getNeuronList().get(j).getWeights(k));
 				}
 			}
 		}

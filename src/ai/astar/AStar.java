@@ -2,13 +2,12 @@ package ai.astar;
 
 import gameboard.GameBoard;
 import ai.AI;
-import ai.reinforcement.ReinforcementNode;
 
 public class AStar extends AI {
 
-	private int[] memory;
+//	private int[] memory;
 	
-	private AStarNodes currentNode;
+//	private AStarNodes currentNode;
 	
 	
 	public AStar(){
